@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Instruction booklet: how to do one thing with what exists today.
+  Only verified behaviour. Open questions go in a proposal; the booklet
+  lists them in <decisions> and points to that proposal.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:include schemaLocation="base.xsd"/>
+
+  <xs:element name="booklet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="purpose" type="blockContent"/>
+        <xs:element name="requires" type="blockContent" minOccurs="0"/>
+        <xs:element name="step" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="blockContent">
+                <xs:attribute name="id" type="xs:ID"/>
+                <xs:attribute name="title" type="xs:string" use="required"/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="rules" minOccurs="0">
+          <xs:complexType><xs:sequence><xs:element ref="rule" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+        </xs:element>
+        <xs:element name="limits" minOccurs="0">
+          <xs:complexType><xs:sequence><xs:element ref="limit" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+        </xs:element>
+        <xs:element name="facts" minOccurs="0">
+          <xs:complexType><xs:sequence><xs:element ref="fact" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+        </xs:element>
+        <xs:element name="decisions" minOccurs="0">
+          <xs:complexType><xs:sequence><xs:element ref="decision" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+        </xs:element>
+        <xs:element ref="related" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="docAttributes"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

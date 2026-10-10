@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Implementation plan: the code changes that reach a goal, as ordered phases.
+  Each phase names its repository, what it changes and its done criterion.
+  Decisions the phases depend on come first.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:include schemaLocation="base.xsd"/>
+
+  <xs:element name="plan">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="goal" type="blockContent"/>
+        <xs:element name="current" type="blockContent" minOccurs="0"/>
+        <xs:element name="decisions" minOccurs="0">
+          <xs:complexType><xs:sequence><xs:element ref="decision" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+        </xs:element>
+        <xs:element name="phase" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:group ref="blocks" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="done" type="inlineText"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:ID" use="required"/>
+            <xs:attribute name="title" type="xs:string" use="required"/>
+            <xs:attribute name="repo" type="xs:string" use="required"/>
+            <xs:attribute name="after" type="xs:IDREFS"/>
+            <xs:attribute name="needs" type="xs:IDREFS">
+              <xs:annotation><xs:documentation>Decisions that must be decided before this phase starts.</xs:documentation></xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="status" default="todo">
+              <xs:simpleType>
+                <xs:restriction base="xs:token">
+                  <xs:enumeration value="todo"/>
+                  <xs:enumeration value="doing"/>
+                  <xs:enumeration value="done"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="risks" type="blockContent" minOccurs="0"/>
+        <xs:element ref="related" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="docAttributes"/>
+      <xs:attribute name="status" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="draft"/>
+            <xs:enumeration value="approved"/>
+            <xs:enumeration value="in-progress"/>
+            <xs:enumeration value="done"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

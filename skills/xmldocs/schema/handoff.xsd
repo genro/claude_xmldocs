@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Handoff: what the next session needs to continue the work.
+  Private type: lives in temp/xmldocs/handoff/, never committed.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:include schemaLocation="base.xsd"/>
+
+  <xs:element name="handoff">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="state" type="blockContent"/>
+        <xs:element name="done" type="blockContent" minOccurs="0"/>
+        <xs:element name="next" type="blockContent"/>
+        <xs:element name="decisions" minOccurs="0">
+          <xs:complexType><xs:sequence><xs:element ref="decision" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+        </xs:element>
+        <xs:element ref="related" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="docAttributes"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

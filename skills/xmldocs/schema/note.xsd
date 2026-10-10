@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Internal note: free structure, base vocabulary only.
+  Private type: lives in temp/xmldocs/note/, never committed.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:include schemaLocation="base.xsd"/>
+
+  <xs:element name="note">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="blocks" maxOccurs="unbounded"/>
+        <xs:element ref="related" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="docAttributes"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

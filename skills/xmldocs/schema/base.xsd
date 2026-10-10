@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  xmldocs base vocabulary, shared by every document type.
+
+  A type schema (booklet.xsd, proposal.xsd, ...) includes this file and
+  declares only its root element and its required sections.
+  Structure is checked here; rules between attributes are in rules.sch.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <!-- ===== simple types ===== -->
+
+  <xs:simpleType name="factMethod">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="read"/>
+      <xs:enumeration value="test"/>
+      <xs:enumeration value="run"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ruleLevel">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="must"/>
+      <xs:enumeration value="must-not"/>
+      <xs:enumeration value="should"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="decisionStatus">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="open"/>
+      <xs:enumeration value="proposed"/>
+      <xs:enumeration value="decided"/>
+      <xs:enumeration value="rejected"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="embedKind">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="html"/>
+      <xs:enumeration value="svg"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="diagramKind">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="mermaid"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ===== inline content ===== -->
+
+  <xs:group name="inline">
+    <xs:choice>
+      <xs:element name="c" type="xs:string"/>
+      <xs:element name="em" type="xs:string"/>
+      <xs:element name="b" type="xs:string"/>
+      <xs:element name="link">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="href" type="xs:string" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ref">
+        <xs:annotation><xs:documentation>Reference to an id in this document or, with doc, to another document.</xs:documentation></xs:annotation>
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="to" type="xs:string" use="required"/>
+              <xs:attribute name="doc" type="xs:string"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:group>
+
+  <xs:complexType name="inlineText" mixed="true">
+    <xs:group ref="inline" minOccurs="0" maxOccurs="unbounded"/>
+  </xs:complexType>
+
+  <!-- ===== blocks ===== -->
+
+  <xs:group name="blocks">
+    <xs:choice>
+      <xs:element name="p" type="inlineText"/>
+      <xs:element ref="list"/>
+      <xs:element ref="table"/>
+      <xs:element ref="code"/>
+      <xs:element ref="diagram"/>
+      <xs:element ref="embed"/>
+      <xs:element ref="fact"/>
+      <xs:element ref="rule"/>
+      <xs:element ref="limit"/>
+      <xs:element ref="decision"/>
+      <xs:element ref="example"/>
+      <xs:element ref="section"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:complexType name="blockContent">
+    <xs:group ref="blocks" minOccurs="0" maxOccurs="unbounded"/>
+  </xs:complexType>
+
+  <xs:element name="section">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="blockContent">
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="title" type="xs:string" use="required"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="list">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="item" maxOccurs="unbounded">
+          <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:group ref="inline"/>
+              <xs:element ref="list"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="ordered" type="xs:boolean" default="false"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="table">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="row" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="cell" type="inlineText" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="head" type="xs:boolean" default="false"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="title" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="code">
+    <xs:annotation><xs:documentation>Source code. Write the body in CDATA.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="lang" type="xs:token"/>
+          <xs:attribute name="file" type="xs:string"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="diagram">
+    <xs:annotation><xs:documentation>Diagram source. Write the body in CDATA.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="kind" type="diagramKind" use="required"/>
+          <xs:attribute name="title" type="xs:string"/>
+          <xs:attribute name="id" type="xs:ID"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="embed">
+    <xs:annotation><xs:documentation>
+      Hand-made HTML or SVG for an edge case the vocabulary cannot express.
+      Body in CDATA, inserted as is into the HTML view. Visual only: summary
+      carries the information in text, for the Markdown view and for search.
+      Scripts and on* handlers are refused unless scripts="true".
+    </xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="kind" type="embedKind" use="required"/>
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="title" type="xs:string" use="required"/>
+          <xs:attribute name="summary" type="xs:string" use="required"/>
+          <xs:attribute name="scripts" type="xs:boolean" default="false"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="fact">
+    <xs:annotation><xs:documentation>A verified statement about code or system state.</xs:documentation></xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:complexContent>
+        <xs:extension base="inlineText">
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="source" type="xs:string" use="required"/>
+          <xs:attribute name="method" type="factMethod" use="required"/>
+          <xs:attribute name="verified" type="xs:date" use="required"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="rule">
+    <xs:complexType mixed="true">
+      <xs:complexContent>
+        <xs:extension base="inlineText">
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="level" type="ruleLevel" use="required"/>
+          <xs:attribute name="why" type="xs:string"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="limit">
+    <xs:annotation><xs:documentation>Something the subject does not do today.</xs:documentation></xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:complexContent>
+        <xs:extension base="inlineText">
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="source" type="xs:string"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="decision">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="question" type="inlineText"/>
+        <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="blockContent">
+                <xs:attribute name="id" type="xs:ID" use="required"/>
+                <xs:attribute name="title" type="xs:string" use="required"/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="choice" minOccurs="0">
+          <xs:complexType mixed="true">
+            <xs:complexContent>
+              <xs:extension base="inlineText">
+                <xs:attribute name="option" type="xs:IDREF" use="required"/>
+                <xs:attribute name="by" type="xs:string"/>
+                <xs:attribute name="date" type="xs:date"/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID" use="required"/>
+      <xs:attribute name="status" type="decisionStatus" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="example">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="blockContent">
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="title" type="xs:string" use="required"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ===== document-level parts shared by all types ===== -->
+
+  <xs:element name="related">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="doc" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string" use="required"/>
+                <xs:attribute name="href" type="xs:string"/>
+                <xs:attribute name="type" type="xs:token"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:attributeGroup name="docAttributes">
+    <xs:attribute name="id" type="xs:string" use="required"/>
+    <xs:attribute name="title" type="xs:string" use="required"/>
+    <xs:attribute name="date" type="xs:date" use="required"/>
+    <xs:attribute name="lang" type="xs:language" default="it"/>
+    <xs:attribute name="author" type="xs:string"/>
+  </xs:attributeGroup>
+
+</xs:schema>

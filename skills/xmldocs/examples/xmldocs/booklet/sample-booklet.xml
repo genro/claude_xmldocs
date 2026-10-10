@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<booklet id="booklet/sample-booklet" title="Sample booklet" date="2026-10-10" lang="en" author="Giovanni Porcari">
+  <purpose>
+    <p>Shows every element of the base vocabulary: <c>fact</c>, <c>rule</c>, <c>diagram</c>, <c>embed</c>.</p>
+  </purpose>
+  <requires>
+    <list><item>Python 3.11</item><item><c>lxml</c> 5 or later</item></list>
+  </requires>
+  <step id="s-write" title="Write the document">
+    <p>Code goes in CDATA.</p>
+    <example title="A condition with &lt; and &amp;">
+      <code lang="python" file="demo.py"><![CDATA[
+if a < b and c & d:
+    print("<ok>")
+]]></code>
+    </example>
+  </step>
+  <step id="s-diagram" title="Draw a diagram">
+    <diagram kind="mermaid" title="Sync request"><![CDATA[
+sequenceDiagram
+    EventLoop->>Pool: run_sync(handler)
+    Pool->>Db: query / commit
+    Pool-->>EventLoop: result
+]]></diagram>
+    <embed kind="svg" id="e-threads" title="One connection per thread"
+           summary="Each pool thread has its own database connection; the event loop has none.">
+<![CDATA[
+<svg viewBox="0 0 420 130" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="13">
+  <rect x="10" y="10" width="120" height="40" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+  <text x="70" y="35" text-anchor="middle" fill="var(--fg)">EventLoop</text>
+  <rect x="150" y="10" width="120" height="40" rx="8" fill="var(--panel)" stroke="var(--accent)"/>
+  <text x="210" y="35" text-anchor="middle" fill="var(--fg)">pool_0</text>
+  <rect x="290" y="10" width="120" height="40" rx="8" fill="var(--panel)" stroke="var(--accent)"/>
+  <text x="350" y="35" text-anchor="middle" fill="var(--fg)">pool_1</text>
+  <line x1="210" y1="50" x2="210" y2="85" stroke="var(--accent)"/>
+  <line x1="350" y1="50" x2="350" y2="85" stroke="var(--accent)"/>
+  <rect x="150" y="85" width="260" height="34" rx="8" fill="none" stroke="var(--ok)"/>
+  <text x="280" y="107" text-anchor="middle" fill="var(--muted)">one connection per thread</text>
+</svg>
+]]></embed>
+    <embed kind="html" id="e-slider" title="Connections by number of threads" scripts="true"
+           summary="Connections grow linearly: each thread adds one.">
+<![CDATA[
+<label style="color: var(--fg)">Threads: <input type="range" min="1" max="8" value="2" id="e-slider-in"></label>
+<span id="e-slider-out" style="color: var(--muted)">2 connections</span>
+<script>
+document.getElementById('e-slider-in').addEventListener('input', e => {
+  document.getElementById('e-slider-out').textContent = e.target.value + ' connections';
+});
+</script>
+]]></embed>
+    <table title="Table">
+      <row head="true"><cell>Element</cell><cell>Use</cell></row>
+      <row><cell><c>fact</c></cell><cell>a verified statement with its source</cell></row>
+    </table>
+  </step>
+  <rules>
+    <rule level="must" why="Otherwise a closing tag in the body breaks the parse.">Use CDATA for <c>code</c>, <c>diagram</c> and <c>embed</c>.</rule>
+    <rule level="must-not">Write a fact without a source.</rule>
+  </rules>
+  <limits>
+    <limit source="schema/base.xsd">Mermaid is the only diagram kind.</limit>
+  </limits>
+  <facts>
+    <fact source="scripts/xmldocs.py" method="run" verified="2026-10-10">The script validates and renders this file.</fact>
+  </facts>
+  <decisions>
+    <decision id="d-md" status="open">
+      <question>Should the Markdown view keep the embeds' source?</question>
+      <option id="d-md-yes" title="Yes"><p>Longer file, readable on GitHub.</p></option>
+      <option id="d-md-no" title="No"/>
+    </decision>
+    <decision id="d-cdata" status="decided">
+      <question>How is code written?</question>
+      <option id="d-cdata-a" title="CDATA"/>
+      <option id="d-cdata-b" title="Manual escaping"/>
+      <choice option="d-cdata-a" by="GP" date="2026-10-10">Readable for an LLM.</choice>
+    </decision>
+  </decisions>
+  <related>
+    <doc id="booklet/xmldocs" href="../../../../../xmldocs/booklet/xmldocs.html" type="booklet">Why xmldocs, and how to use it</doc>
+  </related>
+</booklet>

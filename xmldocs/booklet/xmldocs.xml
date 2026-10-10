@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<booklet id="booklet/xmldocs" title="xmldocs: one XML source, two views" date="2026-10-10" lang="en" author="Giovanni Porcari">
+
+  <purpose>
+    <p><c>xmldocs</c> is an experimental Claude Code skill. It starts from the thesis of <link href="https://claude.dev/blog/using-claude-code-the-unreasonable-effectiveness-of-html/">The Unreasonable Effectiveness of HTML</link> (Thariq Shihipar, Anthropic): for documents an agent writes for people, HTML works better than Markdown.</p>
+    <p>It tries a middle way. The information stays in typed XML, where it is more structured and easier to search than in Markdown or HTML. The visual enrichment is delegated to XSLT, which generates from each XML an HTML view for people and a compact Markdown view for LLMs, the chat and GitHub.</p>
+    <table title="Which format for which purpose">
+      <row head="true"><cell>Format</cell><cell>Used by</cell><cell>Purpose</cell></row>
+      <row><cell>XML</cell><cell>the LLM that writes or edits</cell><cell>Single source. Metadata as attributes, validated by XSD and Schematron.</cell></row>
+      <row><cell>Markdown</cell><cell>the LLM that reads; people in the chat or on GitHub</cell><cell>Compact view with all the metadata. The cheapest format to read.</cell></row>
+      <row><cell>HTML</cell><cell>people</cell><cell>Full reading: facts, rules and decisions set apart visually, diagrams drawn.</cell></row>
+    </table>
+  </purpose>
+
+  <requires>
+    <list>
+      <item><c>uv</c>, which installs <c>lxml</c> for the script in an isolated environment.</item>
+      <item>A browser with network access for the Mermaid diagrams of the HTML view, loaded from jsdelivr.</item>
+    </list>
+  </requires>
+
+  <step id="s-why-xml" title="Understand why the source is XML">
+    <p>Many sentences of a project document carry metadata: where a fact comes from, how it was verified, whether a decision is open.</p>
+    <p>In XML the metadata are attributes. In Markdown they become sentences: an LLM has to interpret them and no program can check them.</p>
+    <example title="The same fact in both formats">
+      <code lang="xml"><![CDATA[
+<fact source="kajenn/src/kajenn/server.py:416" method="read" verified="2026-10-10">
+The cleanup of <c>request.db</c> runs on the event loop.</fact>
+]]></code>
+      <code lang="markdown"><![CDATA[
+Read in the code on 2026-10-10 (`kajenn/src/kajenn/server.py:416`):
+the cleanup of `request.db` runs on the event loop.
+]]></code>
+    </example>
+    <p>Attributes allow three things Markdown does not:</p>
+    <list>
+      <item>Validation. The XSD refuses a fact without a source. Schematron refuses a plan phase started while a decision it needs is still open.</item>
+      <item>Filtered views. The script can show one part only, for example the decisions.</item>
+      <item>Document types. Each type has required parts: a booklet without steps is invalid.</item>
+    </list>
+  </step>
+
+  <step id="s-why-not-xml" title="Understand why XML is not enough">
+    <p>XML costs more tokens than Markdown, and people do not read it willingly.</p>
+    <p>To read, an LLM spends less with the Markdown view than with the XML. The Markdown view keeps every metadata as a short label.</p>
+    <p>People read the HTML view better: <c>RUN</c>, <c>TEST</c> and <c>READ</c> labels, colours for rule levels and decision states, drawn diagrams.</p>
+    <p>The price is richness. The HTML of the article is made to measure for each document. The HTML of xmldocs comes from a fixed template per type and is static. For the cases the vocabulary cannot express there is <c>embed</c>.</p>
+  </step>
+
+  <step id="s-layout" title="Put the files in the right place">
+    <p>The three files sit in the same folder. Only the XML is edited.</p>
+    <code lang="text"><![CDATA[
+xmldocs/<type>/<name>.xml    source
+xmldocs/<type>/<name>.md     generated
+xmldocs/<type>/<name>.html   generated
+]]></code>
+    <p>Public types (<c>booklet</c>, <c>proposal</c>) live in <c>xmldocs/</c> and are committed. Private types (<c>plan</c>, <c>handoff</c>, <c>note</c>) live in <c>temp/xmldocs/</c>, which git ignores.</p>
+  </step>
+
+  <step id="s-use" title="Write, validate, generate">
+    <code lang="console"><![CDATA[
+uv run --script skills/xmldocs/scripts/xmldocs.py check xmldocs temp/xmldocs
+uv run --script skills/xmldocs/scripts/xmldocs.py render xmldocs temp/xmldocs
+]]></code>
+    <p><c>check</c> applies the type's XSD, the embed check and the Schematron rules. <c>render</c> writes <c>.md</c> and <c>.html</c> beside every XML.</p>
+  </step>
+
+  <step id="s-embed" title="Add hand-made SVG or HTML for edge cases">
+    <p>An <c>embed</c> holds SVG or HTML in CDATA and is inserted as is into the HTML view. It is visual only: the required <c>summary</c> carries the information in text, and the Markdown view shows title and summary.</p>
+    <example title="An SVG embed">
+      <code lang="xml"><![CDATA[
+<embed kind="svg" id="e-threads" title="One connection per thread"
+       summary="Each pool thread has its own connection; the event loop has none.">
+<![CDATA[ <svg viewBox="0 0 420 130"> … </svg> ]]]]><![CDATA[>
+</embed>
+]]></code>
+    </example>
+    <p>Colours come from the page variables (<c>var(--fg)</c>, <c>var(--panel)</c>, …), so the embed follows light and dark mode.</p>
+    <p>Script tags, <c>on…=</c> handlers and <c>javascript:</c> URLs are refused unless the embed says <c>scripts="true"</c>. With it, <c>check</c> prints a warning and the HTML marks the embed <c>SCRIPT</c>.</p>
+  </step>
+
+  <step id="s-chat" title="Show a document in the chat">
+    <code lang="console"><![CDATA[
+uv run --script skills/xmldocs/scripts/xmldocs.py show temp/xmldocs/handoff/2026-10-10.xml --part next
+uv run --script skills/xmldocs/scripts/xmldocs.py show xmldocs/booklet/kajenn-app.xml --diagrams
+]]></code>
+    <p><c>show</c> prints the Markdown view and writes no file. In the chat a diagram or an embed becomes one placeholder line, because the chat does not draw Mermaid.</p>
+    <p><c>--diagrams</c> prints the Mermaid sources and the embeds. They are shown with an inline HTML widget, starting from <c>references/mermaid-widget.html</c>.</p>
+    <diagram kind="mermaid" title="One source, four uses"><![CDATA[
+flowchart LR
+    X[name.xml] -->|check| V{XSD + Schematron}
+    V -->|render| H[name.html]
+    V -->|render| M[name.md]
+    V -->|show| C[Markdown in the chat]
+    V -->|show --diagrams| W[widget in the chat]
+]]></diagram>
+  </step>
+
+  <rules>
+    <rule level="must">Edit only the XML, and regenerate <c>.md</c> and <c>.html</c> after every change.</rule>
+    <rule level="must" why="A statement not verified against a source is not a fact.">Verify every <c>fact</c> with tools before writing it.</rule>
+    <rule level="must">Write <c>code</c>, <c>diagram</c> and <c>embed</c> bodies in CDATA.</rule>
+    <rule level="must" why="uv falls back to the enclosing project when the script path does not exist, and creates its uv.lock and .venv.">Run the script with <c>uv run --script</c> and an absolute path.</rule>
+    <rule level="must-not">Name a private document in a public one.</rule>
+    <rule level="must-not" why="They are Mermaid keywords: the diagram is not drawn.">Use <c>loop</c>, <c>alt</c>, <c>opt</c>, <c>par</c>, <c>end</c> or <c>note</c> as participant names in a sequence diagram.</rule>
+  </rules>
+
+  <limits>
+    <limit source="scripts/xmldocs.py">The script does not detect Mermaid syntax errors: Mermaid runs in the browser. A diagram is checked by opening the HTML.</limit>
+    <limit>The side panel of the desktop app may show a local HTML file as a static snapshot. Mermaid does not run there and the diagram stays as source.</limit>
+    <limit source="schema/base.xsd">XSD 1.0 has no assertions. Rules between attributes are in Schematron (<c>schema/rules.sch</c>).</limit>
+    <limit>In the chat, links between documents cannot be followed. The Markdown view shows an internal reference as text followed by <c>(→ id)</c>.</limit>
+    <limit source="xslt/labels.xsl">The fixed labels of the views are in English only. A per-language file that redefines them is planned, not written.</limit>
+    <limit>The content of an <c>embed</c> is not validated: broken HTML breaks the page.</limit>
+  </limits>
+
+  <facts>
+    <fact source="tiktoken o200k_base, handoff of 2026-10-10" method="run" verified="2026-10-10">Same handoff: hand-written Markdown 1,139 tokens, XML 1,742, HTML 4,070 (1,530 of them CSS), generated Markdown view 1,234. Claude's tokenizer was not available: the ratios are indicative.</fact>
+    <fact source="handoff of 2026-10-10" method="read" verified="2026-10-10">The generated Markdown view carries source, method and date of 12 facts; the hand-written handoff carries the source of some and the method of none.</fact>
+    <fact source="Claude Code desktop chat" method="run" verified="2026-10-10">A <c>```mermaid</c> block in the reply text appears as code. The same source in an inline HTML widget is drawn.</fact>
+    <fact source="Claude Code desktop chat" method="run" verified="2026-10-10">With the <c>base</c> theme in dark mode, participant boxes have unreadable text until <c>actorBkg</c> and <c>actorTextColor</c> are set.</fact>
+    <fact source="browser pane, sample-booklet.html" method="run" verified="2026-10-10">An SVG embed using the page variables is readable in light and dark mode; an HTML embed with <c>scripts="true"</c> runs its script.</fact>
+  </facts>
+
+  <related>
+    <doc id="booklet/sample-booklet" href="../../skills/xmldocs/examples/xmldocs/booklet/sample-booklet.html" type="booklet">Every element of the base vocabulary</doc>
+  </related>
+</booklet>

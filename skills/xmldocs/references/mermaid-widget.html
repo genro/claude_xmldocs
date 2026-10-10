@@ -1,0 +1,32 @@
+<!--
+  Widget for showing one Mermaid diagram inside the chat (show_widget tool).
+  Replace __MERMAID__ with the diagram source printed by `show --diagrams`,
+  and __ID__ with a short unique id. The colour block keeps the participant
+  boxes readable in dark mode; do not drop it.
+-->
+<div id="__ID__"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const themeMode = document.documentElement.dataset.mode;
+const dark = themeMode ? themeMode === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+const text = dark ? '#c2c0b6' : '#3d3d3a';
+const line = dark ? '#9c9a92' : '#73726c';
+const box = dark ? '#2a2a27' : '#f1efe8';
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"anthropic-sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"anthropic-sans", sans-serif',
+    lineColor: line, textColor: text,
+    primaryColor: box, primaryTextColor: text, primaryBorderColor: line,
+    actorBkg: box, actorBorder: line, actorTextColor: text, actorLineColor: line,
+    signalColor: line, signalTextColor: text,
+  },
+});
+const { svg } = await mermaid.render('__ID__-svg', `__MERMAID__`);
+document.getElementById('__ID__').innerHTML = svg;
+</script>

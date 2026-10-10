@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!-- generated from xmldocs.xml by xmldocs: do not edit, edit the XML -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>xmldocs: one XML source, two views</title><style>
+:root {
+  --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e2dfd8; --panel: #f3f1ec;
+  --code-bg: #f0eee8; --accent: #2f5d8a;
+  --ok: #2e7d4f; --warn: #a86b00; --bad: #b23b3b; --info: #2f5d8a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #18181a; --fg: #e8e6e1; --muted: #9a9890; --line: #33332f; --panel: #212123;
+    --code-bg: #26262a; --accent: #8fb4dc;
+    --ok: #6cc28f; --warn: #e0a940; --bad: #e57373; --info: #8fb4dc;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #18181a; --fg: #e8e6e1; --muted: #9a9890; --line: #33332f; --panel: #212123;
+  --code-bg: #26262a; --accent: #8fb4dc;
+  --ok: #6cc28f; --warn: #e0a940; --bad: #e57373; --info: #8fb4dc;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 1.9rem; line-height: 1.2; margin: 4px 0 8px; }
+h2 { font-size: 1.35rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1.12rem; margin: 28px 0 8px; }
+h4 { font-size: 1rem; margin: 20px 0 6px; }
+a { color: var(--accent); }
+code { font: 0.9em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code-bg);
+  padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { margin: 0; overflow-x: auto; }
+pre code { display: block; padding: 12px 14px; background: none; }
+figure { margin: 16px 0; }
+figure.code { background: var(--code-bg); border-radius: 8px; }
+figure.code figcaption { font-size: 0.8rem; color: var(--muted); padding: 8px 14px 0; }
+figure.diagram { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; }
+figure.embed { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; }
+figure.embed figcaption { font-size: 0.85rem; color: var(--muted); text-align: center; margin-top: 8px; }
+figure.embed svg { max-width: 100%; height: auto; }
+.tag-script { color: var(--bad); }
+figure.diagram figcaption { font-size: 0.85rem; color: var(--muted); text-align: center; margin-top: 8px; }
+.doc-type { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; color: var(--muted); }
+.doc-meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.9rem; }
+.muted { color: var(--muted); font-size: 0.9em; }
+.box { border: 1px solid var(--line); border-left: 4px solid var(--line); background: var(--panel);
+  border-radius: 6px; padding: 10px 14px; margin: 12px 0; }
+.box-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
+.box-foot { margin-top: 6px; }
+.box.fact { border-left-color: var(--info); }
+.box.rule-must { border-left-color: var(--ok); }
+.box.rule-must-not { border-left-color: var(--bad); }
+.box.rule-should { border-left-color: var(--warn); }
+.box.limit { border-left-color: var(--warn); }
+.box.decision-open, .box.decision-proposed { border-left-color: var(--warn); }
+.box.decision-decided { border-left-color: var(--ok); }
+.box.decision-rejected { border-left-color: var(--bad); }
+.box.example { border-left-color: var(--accent); }
+.box.done { border-left-color: var(--ok); }
+.tag-done { color: var(--ok); }
+.tag-doing, .tag-in-progress { color: var(--info); }
+.tag-todo { color: var(--muted); }
+.tag-approved { color: var(--ok); }
+.source { font-size: 0.8rem; }
+.why { margin-top: 4px; }
+.tag { display: inline-block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.04em; padding: 1px 7px; border-radius: 10px; border: 1px solid currentColor; color: var(--muted); }
+.tag-test, .tag-run, .tag-must, .tag-decided, .tag-accepted { color: var(--ok); }
+.tag-read, .tag-review { color: var(--info); }
+.tag-should, .tag-open, .tag-proposed, .tag-draft { color: var(--warn); }
+.tag-must-not, .tag-rejected { color: var(--bad); }
+.options li { margin: 6px 0; }
+.options li.chosen b { color: var(--ok); }
+.choice { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.step-num { color: var(--muted); font-weight: 400; margin-right: 6px; }
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+caption { text-align: left; color: var(--muted); padding-bottom: 6px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--panel); }
+  </style></head><body><main><header class="doc-head"><div class="doc-type">Instruction booklet</div><h1>xmldocs: one XML source, two views</h1><div class="doc-meta"><span>booklet/xmldocs</span><span>2026-10-10</span><span>Giovanni Porcari</span></div></header><section class="part purpose"><h2>Purpose</h2>
+    <p><code>xmldocs</code> is an experimental Claude Code skill. It starts from the thesis of <a href="https://claude.dev/blog/using-claude-code-the-unreasonable-effectiveness-of-html/">The Unreasonable Effectiveness of HTML</a> (Thariq Shihipar, Anthropic): for documents an agent writes for people, HTML works better than Markdown.</p>
+    <p>It tries a middle way. The information stays in typed XML, where it is more structured and easier to search than in Markdown or HTML. The visual enrichment is delegated to XSLT, which generates from each XML an HTML view for people and a compact Markdown view for LLMs, the chat and GitHub.</p>
+    <div class="table-wrap"><table><caption>Which format for which purpose</caption>
+      <tr><th>Format</th><th>Used by</th><th>Purpose</th></tr>
+      <tr><td>XML</td><td>the LLM that writes or edits</td><td>Single source. Metadata as attributes, validated by XSD and Schematron.</td></tr>
+      <tr><td>Markdown</td><td>the LLM that reads; people in the chat or on GitHub</td><td>Compact view with all the metadata. The cheapest format to read.</td></tr>
+      <tr><td>HTML</td><td>people</td><td>Full reading: facts, rules and decisions set apart visually, diagrams drawn.</td></tr>
+    </table></div>
+  </section><section class="part requires"><h2>Requirements</h2>
+    <ul>
+      <li><code>uv</code>, which installs <code>lxml</code> for the script in an isolated environment.</li>
+      <li>A browser with network access for the Mermaid diagrams of the HTML view, loaded from jsdelivr.</li>
+    </ul>
+  </section><section class="part steps"><h2>Steps</h2><section class="section step" id="s-why-xml"><h3><span class="step-num">1.</span>Understand why the source is XML</h3>
+    <p>Many sentences of a project document carry metadata: where a fact comes from, how it was verified, whether a decision is open.</p>
+    <p>In XML the metadata are attributes. In Markdown they become sentences: an LLM has to interpret them and no program can check them.</p>
+    <div class="box example"><div class="box-head"><b>The same fact in both formats</b></div>
+      <figure class="code"><figcaption>xml</figcaption><pre><code>&lt;fact source="kajenn/src/kajenn/server.py:416" method="read" verified="2026-10-10"&gt;
+The cleanup of &lt;c&gt;request.db&lt;/c&gt; runs on the event loop.&lt;/fact&gt;</code></pre></figure>
+      <figure class="code"><figcaption>markdown</figcaption><pre><code>Read in the code on 2026-10-10 (`kajenn/src/kajenn/server.py:416`):
+the cleanup of `request.db` runs on the event loop.</code></pre></figure>
+    </div>
+    <p>Attributes allow three things Markdown does not:</p>
+    <ul>
+      <li>Validation. The XSD refuses a fact without a source. Schematron refuses a plan phase started while a decision it needs is still open.</li>
+      <li>Filtered views. The script can show one part only, for example the decisions.</li>
+      <li>Document types. Each type has required parts: a booklet without steps is invalid.</li>
+    </ul>
+  </section><section class="section step" id="s-why-not-xml"><h3><span class="step-num">2.</span>Understand why XML is not enough</h3>
+    <p>XML costs more tokens than Markdown, and people do not read it willingly.</p>
+    <p>To read, an LLM spends less with the Markdown view than with the XML. The Markdown view keeps every metadata as a short label.</p>
+    <p>People read the HTML view better: <code>RUN</code>, <code>TEST</code> and <code>READ</code> labels, colours for rule levels and decision states, drawn diagrams.</p>
+    <p>The price is richness. The HTML of the article is made to measure for each document. The HTML of xmldocs comes from a fixed template per type and is static. For the cases the vocabulary cannot express there is <code>embed</code>.</p>
+  </section><section class="section step" id="s-layout"><h3><span class="step-num">3.</span>Put the files in the right place</h3>
+    <p>The three files sit in the same folder. Only the XML is edited.</p>
+    <figure class="code"><figcaption>text</figcaption><pre><code>xmldocs/&lt;type&gt;/&lt;name&gt;.xml    source
+xmldocs/&lt;type&gt;/&lt;name&gt;.md     generated
+xmldocs/&lt;type&gt;/&lt;name&gt;.html   generated</code></pre></figure>
+    <p>Public types (<code>booklet</code>, <code>proposal</code>) live in <code>xmldocs/</code> and are committed. Private types (<code>plan</code>, <code>handoff</code>, <code>note</code>) live in <code>temp/xmldocs/</code>, which git ignores.</p>
+  </section><section class="section step" id="s-use"><h3><span class="step-num">4.</span>Write, validate, generate</h3>
+    <figure class="code"><figcaption>console</figcaption><pre><code>uv run --script skills/xmldocs/scripts/xmldocs.py check xmldocs temp/xmldocs
+uv run --script skills/xmldocs/scripts/xmldocs.py render xmldocs temp/xmldocs</code></pre></figure>
+    <p><code>check</code> applies the type's XSD, the embed check and the Schematron rules. <code>render</code> writes <code>.md</code> and <code>.html</code> beside every XML.</p>
+  </section><section class="section step" id="s-embed"><h3><span class="step-num">5.</span>Add hand-made SVG or HTML for edge cases</h3>
+    <p>An <code>embed</code> holds SVG or HTML in CDATA and is inserted as is into the HTML view. It is visual only: the required <code>summary</code> carries the information in text, and the Markdown view shows title and summary.</p>
+    <div class="box example"><div class="box-head"><b>An SVG embed</b></div>
+      <figure class="code"><figcaption>xml</figcaption><pre><code>&lt;embed kind="svg" id="e-threads" title="One connection per thread"
+       summary="Each pool thread has its own connection; the event loop has none."&gt;
+&lt;![CDATA[ &lt;svg viewBox="0 0 420 130"&gt; … &lt;/svg&gt; ]]&gt;
+&lt;/embed&gt;</code></pre></figure>
+    </div>
+    <p>Colours come from the page variables (<code>var(--fg)</code>, <code>var(--panel)</code>, …), so the embed follows light and dark mode.</p>
+    <p>Script tags, <code>on…=</code> handlers and <code>javascript:</code> URLs are refused unless the embed says <code>scripts="true"</code>. With it, <code>check</code> prints a warning and the HTML marks the embed <code>SCRIPT</code>.</p>
+  </section><section class="section step" id="s-chat"><h3><span class="step-num">6.</span>Show a document in the chat</h3>
+    <figure class="code"><figcaption>console</figcaption><pre><code>uv run --script skills/xmldocs/scripts/xmldocs.py show temp/xmldocs/handoff/2026-10-10.xml --part next
+uv run --script skills/xmldocs/scripts/xmldocs.py show xmldocs/booklet/kajenn-app.xml --diagrams</code></pre></figure>
+    <p><code>show</code> prints the Markdown view and writes no file. In the chat a diagram or an embed becomes one placeholder line, because the chat does not draw Mermaid.</p>
+    <p><code>--diagrams</code> prints the Mermaid sources and the embeds. They are shown with an inline HTML widget, starting from <code>references/mermaid-widget.html</code>.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+    X[name.xml] --&gt;|check| V{XSD + Schematron}
+    V --&gt;|render| H[name.html]
+    V --&gt;|render| M[name.md]
+    V --&gt;|show| C[Markdown in the chat]
+    V --&gt;|show --diagrams| W[widget in the chat]</pre><figcaption>One source, four uses</figcaption></figure>
+  </section></section><section class="part rules"><h2>Rules</h2>
+    <div class="box rule rule-must"><div class="box-head"><span class="tag tag-must">must</span></div><div>Edit only the XML, and regenerate <code>.md</code> and <code>.html</code> after every change.</div></div>
+    <div class="box rule rule-must"><div class="box-head"><span class="tag tag-must">must</span></div><div>Verify every <code>fact</code> with tools before writing it.</div><div class="muted why">A statement not verified against a source is not a fact.</div></div>
+    <div class="box rule rule-must"><div class="box-head"><span class="tag tag-must">must</span></div><div>Write <code>code</code>, <code>diagram</code> and <code>embed</code> bodies in CDATA.</div></div>
+    <div class="box rule rule-must"><div class="box-head"><span class="tag tag-must">must</span></div><div>Run the script with <code>uv run --script</code> and an absolute path.</div><div class="muted why">uv falls back to the enclosing project when the script path does not exist, and creates its uv.lock and .venv.</div></div>
+    <div class="box rule rule-must-not"><div class="box-head"><span class="tag tag-must-not">must-not</span></div><div>Name a private document in a public one.</div></div>
+    <div class="box rule rule-must-not"><div class="box-head"><span class="tag tag-must-not">must-not</span></div><div>Use <code>loop</code>, <code>alt</code>, <code>opt</code>, <code>par</code>, <code>end</code> or <code>note</code> as participant names in a sequence diagram.</div><div class="muted why">They are Mermaid keywords: the diagram is not drawn.</div></div>
+  </section><section class="part limits"><h2>Current limits</h2>
+    <div class="box limit"><div>The script does not detect Mermaid syntax errors: Mermaid runs in the browser. A diagram is checked by opening the HTML.</div><div class="box-foot"><code class="source">scripts/xmldocs.py</code></div></div>
+    <div class="box limit"><div>The side panel of the desktop app may show a local HTML file as a static snapshot. Mermaid does not run there and the diagram stays as source.</div></div>
+    <div class="box limit"><div>XSD 1.0 has no assertions. Rules between attributes are in Schematron (<code>schema/rules.sch</code>).</div><div class="box-foot"><code class="source">schema/base.xsd</code></div></div>
+    <div class="box limit"><div>In the chat, links between documents cannot be followed. The Markdown view shows an internal reference as text followed by <code>(→ id)</code>.</div></div>
+    <div class="box limit"><div>The fixed labels of the views are in English only. A per-language file that redefines them is planned, not written.</div><div class="box-foot"><code class="source">xslt/labels.xsl</code></div></div>
+    <div class="box limit"><div>The content of an <code>embed</code> is not validated: broken HTML breaks the page.</div></div>
+  </section><section class="part facts"><h2>Verified facts</h2>
+    <div class="box fact"><div class="box-head"><span class="tag tag-run">run</span><code class="source">tiktoken o200k_base, handoff of 2026-10-10</code><span class="muted">2026-10-10</span></div><div>Same handoff: hand-written Markdown 1,139 tokens, XML 1,742, HTML 4,070 (1,530 of them CSS), generated Markdown view 1,234. Claude's tokenizer was not available: the ratios are indicative.</div></div>
+    <div class="box fact"><div class="box-head"><span class="tag tag-read">read</span><code class="source">handoff of 2026-10-10</code><span class="muted">2026-10-10</span></div><div>The generated Markdown view carries source, method and date of 12 facts; the hand-written handoff carries the source of some and the method of none.</div></div>
+    <div class="box fact"><div class="box-head"><span class="tag tag-run">run</span><code class="source">Claude Code desktop chat</code><span class="muted">2026-10-10</span></div><div>A <code>```mermaid</code> block in the reply text appears as code. The same source in an inline HTML widget is drawn.</div></div>
+    <div class="box fact"><div class="box-head"><span class="tag tag-run">run</span><code class="source">Claude Code desktop chat</code><span class="muted">2026-10-10</span></div><div>With the <code>base</code> theme in dark mode, participant boxes have unreadable text until <code>actorBkg</code> and <code>actorTextColor</code> are set.</div></div>
+    <div class="box fact"><div class="box-head"><span class="tag tag-run">run</span><code class="source">browser pane, sample-booklet.html</code><span class="muted">2026-10-10</span></div><div>An SVG embed using the page variables is readable in light and dark mode; an HTML embed with <code>scripts="true"</code> runs its script.</div></div>
+  </section><section class="part related"><h2>Related documents</h2><ul>
+    <li><a href="sample-booklet.html">booklet/sample-booklet</a><span class="tag">booklet</span> — Every element of the base vocabulary</li>
+  </ul></section></main><script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'neutral' });
+          </script></body></html>
