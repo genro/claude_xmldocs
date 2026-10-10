@@ -7,7 +7,7 @@ included, and their generated HTML views are published as they are.
 
 project = "xmldocs"
 author = "Giovanni Porcari"
-copyright = "2026, Softwell S.r.l."
+copyright = "2026, Giovanni Porcari"
 release = "0.1.0"
 version = release
 

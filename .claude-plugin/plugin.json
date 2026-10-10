@@ -1,8 +1,9 @@
 {
   "name": "xmldocs",
   "version": "0.1.0",
-  "description": "Writes project documents as typed XML — one source for LLMs, validated by XSD and Schematron, rendered to readable HTML by XSLT.",
+  "description": "Writes project documents as typed XML \u2014 one source for LLMs, validated by XSD and Schematron, rendered to readable HTML by XSLT.",
   "author": {
     "name": "Giovanni Porcari"
-  }
+  },
+  "license": "Apache-2.0"
 }

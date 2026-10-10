@@ -135,3 +135,7 @@ uvx --from sphinx --with myst-parser --with sphinx-rtd-theme --with sphinxcontri
 ```bash
 uv run --script "$PWD/skills/xmldocs/scripts/xmldocs.py" render skills/xmldocs/examples/xmldocs
 ```
+
+## License
+
+Apache License 2.0. Copyright 2026 Giovanni Porcari. See [LICENSE](LICENSE).
